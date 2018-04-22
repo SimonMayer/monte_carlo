@@ -5,10 +5,10 @@ A simulator and forecast tool, using the Monte Carlo method; which carries out m
 A modern web browser. Specifically one that supports ECMAScript 6.
 
 ## Getting started
-0. Download the source files
-0. Open src/pages/dashboard.html in your browser
-0. Enter your data in to the form
-0. Click **Calculate**
+1. Download the source files
+1. Open src/pages/dashboard.html in your browser
+1. Enter your data in to the form
+1. Click **Calculate**
 
 ## Advanced configuration
 Changes to default parameters can be made in src/assets/scripts/app-config.js
