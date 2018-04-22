@@ -1,0 +1,208 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <title>Monte Carlo forecast tool</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+          crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+            integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+            crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+
+    <script src="../assets/scripts/form-manager.js"></script>
+    <script src="../assets/scripts/simulator/cycle.js"></script>
+    <script src="../assets/scripts/simulator/simulator.js"></script>
+    <script src="../assets/scripts/cycle-chart/cycle-chart.js"></script>
+    <script src="../assets/scripts/cycle-chart/burn-up-chart.js"></script>
+    <script src="../assets/scripts/cycle-chart/varied-forecast-bar-chart.js"></script>
+    <script src="../assets/scripts/cycle-chart/reached-milestone-distribution-chart.js"></script>
+    <script src="../assets/scripts/app-config.js"></script>
+    <script src="../assets/scripts/dashboard.js"></script>
+</head>
+<body>
+<script>
+    $(document).ready(function () {
+        const simulator = new Simulator();
+        const burnUp = new BurnUpChart(AppConfig.chart.burnUp, $('#burnUpChart'));
+        const variedForecast = new VariedForecastBarChart(AppConfig.chart.variedForecast, $('#variedForecastBars'));
+        const reachedMilestonesDistribution = new ReachedMilestoneDistributionChart(
+            AppConfig.chart.reachedMilestone,
+            $('#reachedMilestoneDistributionChart')
+        );
+        const dashboard = new Dashboard(simulator, burnUp, variedForecast, reachedMilestonesDistribution);
+        const formManager = new FormManager();
+
+        $('[data-form=simulation]').each(function () {
+            formManager.initializeEntryPoint($(this));
+        });
+
+        $('#calculate').on('click', function () {
+            dashboard.simulate(
+                formManager.getValueById('milestone'),
+                AppConfig.simulationCount,
+                formManager.getValueById('cycleCount'),
+                formManager.getValueById('previousOutcomes').match(/\d+((\.|,)\d+)?/g)
+            );
+            dashboard.generateBurnUp([
+                formManager.getValueById('burnUpOptimistic'),
+                formManager.getValueById('burnUpProbable'),
+                formManager.getValueById('burnUpPessimistic')
+            ]);
+            dashboard.generateVariedForecast(AppConfig.iterativeForecastPercentages);
+            dashboard.generateReachedMilestonesDistribution();
+        });
+    });
+</script>
+<div class="container-fluid">
+    <h1>Monte Carlo forecast tool</h1>
+    <div class="row">
+        <div class="col-12">
+            <h2 id="variedForecastBarsTitle" hidden>Varied forecast bar chart</h2>
+            <details id="variedForecastBarsHelp" hidden>
+                <summary>What is this?</summary>
+                <p>
+                    A chart showing the number of items forecast to be completed by the end of each cycle, at various
+                    levels of certainty.
+                </p>
+                <p>
+                    The bottom colour represents the number of items that are most likely to be completed by the end of
+                    each cycle.<br>
+                    Above, further bars are added to show the likelihood of additional items being completed.
+                </p>
+            </details>
+            <div id="variedForecastBars"
+                 data-title="#variedForecastBarsTitle"
+                 data-help="#variedForecastBarsHelp"
+            ></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <h2 id="burnUpChartTitle" hidden>Forecast burn-up chart</h2>
+            <details id="burnUpChartHelp" hidden>
+                <summary>What is this?</summary>
+                <p>
+                    A chart showing the number of items forecast to be completed by the end of each cycle, with high and
+                    low bounds.
+                </p>
+                <p>
+                    The bottom line represents the pessimistic forecast, with the highest line representing the
+                    optimistic forecast.<br>
+                    This emphasises that there is always uncertainty when providing forecasts.
+                </p>
+            </details>
+            <div id="burnUpChart" data-title="#burnUpChartTitle" data-help="#burnUpChartHelp"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <h2 id="reachedMilestoneDistributionChartTitle" hidden>Distribution of cycles required</h2>
+            <details id="reachedMilestoneDistributionChartHelp" hidden>
+                <summary>What is this?</summary>
+                <p>
+                    A chart showing the distribution of likelihood that the milestone will be reached within a given
+                    cycle.
+                </p>
+                <p>
+                    This indicates the reliability of the forecast, and is most significantly influenced by the
+                    consistency of previous outcomes<br>
+                    This should be in the shape of a bell curve, and a narrow distribution implies a greater degree of
+                    certainty.
+                </p>
+            </details>
+            <div id="reachedMilestoneDistributionChart"
+                 data-title="#reachedMilestoneDistributionChartTitle"
+                 data-help="#reachedMilestoneDistributionChartHelp"
+            ></div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-3">
+            <button class="btn btn-primary" id="calculate">Calculate</button>
+        </div>
+        <div class="col-12 col-sm-6">
+            Enter the values below, and click <b class="text-primary">Calculate</b> to see the forecast.
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="form-group" data-form="simulation" id="milestone">
+                <label>Milestone</label>
+                <input type="number"
+                       min="1"
+                       placeholder="Enter a milestone"
+                       data-help-text="This is the number of items you wish to complete."
+                />
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="form-group" data-form="simulation" id="cycleCount">
+                <label>Cycles</label>
+                <input type="number"
+                       min="1"
+                       placeholder="Enter a number of cycles"
+                       data-help-text="This is the number of cycles you wish to include in the calculation."
+                />
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="form-group" data-form="simulation" id="previousOutcomes">
+                <label>Previous outcomes</label>
+                <textarea rows="3"
+                          placeholder="Enter the number of done items in recent cycles"
+                          data-help-text="Enter the number of done items for each of your recent cycles. Separate each number with a space or new line."
+                ></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="form-group" data-form="simulation" id="burnUpPessimistic">
+                <label>Burn-up line (pessimistic)</label>
+                <input type="number"
+                       min="1"
+                       max="100"
+                       step="1"
+                       placeholder="Enter a percentage"
+                       data-help-text="This is the certainty required for the pessimistic scenario. It should be the highest burn-up percentage."
+                       value="75"
+                />
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="form-group" data-form="simulation" id="burnUpProbable">
+                <label>Burn-up (probable)</label>
+                <input type="number"
+                       min="1"
+                       max="100"
+                       step="1"
+                       placeholder="Enter a percentage"
+                       data-help-text="This should be between the pessimistic and optimistic values, and is the line you want to show as the probable outcome."
+                       value="50"
+                />
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="form-group" data-form="simulation" id="burnUpOptimistic">
+                <label>Burn-up line (optimistic)</label>
+                <input type="number"
+                       min="1"
+                       max="100"
+                       step="1"
+                       placeholder="Enter a percentage"
+                       data-help-text="This is the certainty required for the optimistic scenario. It should be the lowest burn-up percentage."
+                       value="25"
+                />
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
