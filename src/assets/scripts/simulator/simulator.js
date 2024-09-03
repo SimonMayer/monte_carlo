@@ -92,7 +92,7 @@ class Simulator {
                 }
 
                 if (index < percentiles.length - 1) {
-                    const higherPercentile = percentiles[parseInt(index) + 1];
+                    const higherPercentile = percentiles[parseInt(index, 10) + 1];
 
                     iterativeForecasts[percentile].push(
                         forecastsByPercentiles[higherPercentile][sequence] -
