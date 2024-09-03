@@ -94,6 +94,10 @@
         Enter the number of completed units per period, separated by commas, spaces or new lines. Example: 14, 12, 7, 11
       </small>
     </div>
+
+    <div class="input-group">
+      <button id="createEnsemble" @click="createEnsemble">Create Ensemble</button>
+    </div>
   </div>
 </template>
 
@@ -122,6 +126,7 @@ export default {
       setHistoricalRecordCount: 'simulationInputs/setHistoricalRecordCount',
       setMilestone: 'simulationInputs/setMilestone',
       setSimulationPeriods: 'simulationInputs/setSimulationPeriods',
+      createEnsemble: 'ensembleGenerator/createEnsemble',
     }),
     updateHistoricalDataFromInput(event, index) {
       if (event.target.value === '') {

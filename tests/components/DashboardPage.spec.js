@@ -69,7 +69,7 @@ describe('DashboardPage.vue', () => {
     });
 
     it('renders historical record count with the correct store value, and displays according to the historical data input method', async () => {
-        store.state.simulationInputs.historicalData = [17,8,9,8,7,0,0,76,11,7,0];
+        store.state.simulationInputs.historicalData = [17, 8, 9, 8, 7, 0, 0, 76, 11, 7, 0];
 
         const input = wrapper.find('#historicalRecordCount');
         expect(input.exists()).toBe(true);
@@ -85,7 +85,7 @@ describe('DashboardPage.vue', () => {
     });
 
     it('renders correct number of historical data input fields, and displays according to the historical data input method', async () => {
-        store.state.simulationInputs.historicalData = [97,8,9,8,7,0,0,1];
+        store.state.simulationInputs.historicalData = [97, 8, 9, 8, 7, 0, 0, 1];
 
         await nextTick();
         const inputs = wrapper.findAll('ol li input[type="number"]');
@@ -160,10 +160,10 @@ describe('DashboardPage.vue', () => {
             {input: '-1', expected: [-1]},
             {input: '1,7,8', expected: [1, 7, 8]},
             {input: 'a3 6 5', expected: [3, 6, 5]},
-            {input: '1;4;8', expected: [1,4,8]},
-            {input: '3 11 5', expected: [3,11,5]},
-            {input: '24'+"\r"+'22', expected: [24,22]},
-            {input: '1a2,17', expected: [12,17]},
+            {input: '1;4;8', expected: [1, 4, 8]},
+            {input: '3 11 5', expected: [3, 11, 5]},
+            {input: '24' + '\r' + '22', expected: [24, 22]},
+            {input: '1a2,17', expected: [12, 17]},
             {input: '1-3,77', expected: [77]},
             {input: '7.2 2.7', expected: [7, 2]},
         ];
@@ -203,5 +203,16 @@ describe('DashboardPage.vue', () => {
             await inputElement.setValue(input);
             expect(store.state.simulationInputs.historicalData[1]).toBe(expected);
         }
+    });
+
+    it('dispatches the correct Vuex action on button click', async () => {
+        const dispatchMock = jest.fn();
+        wrapper.vm.$store.dispatch = dispatchMock;
+
+        const button = wrapper.find('button#createEnsemble');
+        expect(button.exists()).toBe(true);
+
+        await button.trigger('click');
+        expect(dispatchMock).toHaveBeenCalledWith('ensembleGenerator/createEnsemble', expect.anything());
     });
 });

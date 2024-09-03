@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
     <div v-show="isLoading" class="loading-overlay">
-      <img class="spinner" src="/full-roulette.svg" alt="spinning roulette wheel as a loading indicator"/>
+      <img alt="spinning roulette wheel as a loading indicator" class="spinner" src="/full-roulette.svg"/>
     </div>
   </transition>
 </template>

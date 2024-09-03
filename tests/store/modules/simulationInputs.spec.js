@@ -1,27 +1,42 @@
 import simulationInputs from '@/store/modules/simulationInputs';
 import {getLocalStorage, setLocalStorage} from '@/utils/localStorage';
+import {
+    inputsCastAsArrayItemsCastAsIntegerDefaultsToEmptyIfInvalid,
+    inputsCastAsInteger,
+    inputsCastAsPositiveInteger,
+} from '../../testUtils/dataProviders';
 
 jest.mock('@/utils/localStorage', () => ({
     setLocalStorage: jest.fn(),
     getLocalStorage: jest.fn(),
 }));
 
-describe('simulationInputs Store', () => {
+expect.extend({
+    toBeCalledBefore(received, nextCall) {
+        const pass = received < nextCall;
+        const passMessage = `expected call order ${received} not to be before ${nextCall}`;
+        const failMessage = `expected call order ${received} to be before ${nextCall}, but it wasn't`;
+
+        if (pass) {
+            return {message: () => passMessage, pass: true};
+        } else {
+            return {message: () => failMessage, pass: false};
+        }
+    },
+});
+
+describe('simulationInputs store module', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
-    it('sets milestone correctly through mutation', () => {
+    it('sets milestone as integer through mutation', () => {
         const state = {
             milestone: null,
         };
 
-        [
-            {input: 99, expected: 99},
-            {input: '767', expected: 767},
-            {input: -8, expected: -8},
-        ].forEach(
+        inputsCastAsInteger.forEach(
             ({input, expected}) => {
                 simulationInputs.mutations.SET_MILESTONE(state, input);
                 expect(state.milestone).toBe(expected);
@@ -29,17 +44,12 @@ describe('simulationInputs Store', () => {
         );
     });
 
-    it('sets simulation periods correctly through mutation', () => {
+    it('sets simulation periods as positive integer through mutation', () => {
         const state = {
             simulationPeriods: null,
         };
 
-        [
-            {input: 99, expected: 99},
-            {input: '767', expected: 767},
-            {input: 0, expected: 1},
-            {input: -8, expected: 1},
-        ].forEach(
+        inputsCastAsPositiveInteger.forEach(
             ({input, expected}) => {
                 simulationInputs.mutations.SET_SIMULATION_PERIODS(state, input);
                 expect(state.simulationPeriods).toBe(expected);
@@ -68,19 +78,12 @@ describe('simulationInputs Store', () => {
         );
     });
 
-    it('sets historical data correctly through mutation', () => {
+    it('sets historical data either as an array of integers or empty array through mutation', () => {
         const state = {
             historicalData: [],
         };
 
-        [
-            {input: null, expected: []},
-            {input: undefined, expected: []},
-            {input: 'someOldNonsense', expected: []},
-            {input: [], expected: []},
-            {input: [1, 7, 3, -4, 0, 0, 3], expected: [1, 7, 3, -4, 0, 0, 3]},
-            {input: [1, 7.2, '9', -4], expected: [1, 7, 9, -4]},
-        ].forEach(
+        inputsCastAsArrayItemsCastAsIntegerDefaultsToEmptyIfInvalid.forEach(
             ({input, expected}) => {
                 simulationInputs.mutations.SET_HISTORICAL_DATA(state, input);
                 expect(state.historicalData).toStrictEqual(expected);
@@ -170,13 +173,10 @@ describe('simulationInputs Store', () => {
         );
     });
 
-    it('sets milestone mutation and local storage correctly through action', () => {
+    it('sets milestone mutation and local storage as integer through action', () => {
         const commit = jest.fn();
 
-        [
-            {input: 417, expected: 417},
-            {input: '53', expected: 53},
-        ].forEach(
+        inputsCastAsInteger.forEach(
             ({input, expected}, index) => {
                 simulationInputs.actions.setMilestone({commit}, input);
                 expect(commit).toHaveBeenNthCalledWith(index + 1, 'SET_MILESTONE', expected);
@@ -185,13 +185,10 @@ describe('simulationInputs Store', () => {
         );
     });
 
-    it('sets simulation periods mutation and local storage correctly through action', () => {
+    it('sets simulation periods mutation and local storage as positive integer through action', () => {
         const commit = jest.fn();
 
-        [
-            {input: 67, expected: 67},
-            {input: '253', expected: 253},
-        ].forEach(
+        inputsCastAsPositiveInteger.forEach(
             ({input, expected}, index) => {
                 simulationInputs.actions.setSimulationPeriods({commit}, input);
                 expect(commit).toHaveBeenNthCalledWith(index + 1, 'SET_SIMULATION_PERIODS', expected);
@@ -271,14 +268,24 @@ describe('simulationInputs Store', () => {
         const commit = jest.fn();
 
         [
-            {input: 307, expected: 307},
-            {input: '24', expected: 24},
-            {input: 0, expected: 0},
-            {input: -1, expected: 0},
+            {input: 3, expectedLength: 3},
+            {input: '4', expectedLength: 4},
+            {input: 1, expectedLength: 1},
+            {input: 0, expectedLength: 0},
+            {input: -1, expectedLength: 0},
         ].forEach(
-            ({input, expected}, index) => {
-                simulationInputs.actions.setHistoricalRecordCount({commit}, input);
-                expect(commit).toHaveBeenNthCalledWith(index + 1, 'SET_HISTORICAL_DATA_LENGTH', expected);
+            ({input, expectedLength}, index) => {
+                const stateValue = [17, 10];
+                const state = {
+                    historicalData: stateValue,
+                };
+                simulationInputs.actions.setHistoricalRecordCount({state, commit}, input);
+                expect(commit).toHaveBeenNthCalledWith(index + 1, 'SET_HISTORICAL_DATA_LENGTH', expectedLength);
+                expect(setLocalStorage).toHaveBeenNthCalledWith(index + 1, 'historicalData', stateValue);
+
+                const callIndexCommit = commit.mock.invocationCallOrder[index];
+                const callIndexSetLocalStorage = setLocalStorage.mock.invocationCallOrder[index];
+                expect(callIndexCommit).toBeCalledBefore(callIndexSetLocalStorage);
             },
         );
     });

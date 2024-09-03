@@ -9,7 +9,11 @@ const state = {
 
 const mutations = {
     SET_MILESTONE(state, value) {
-        state.milestone = parseInt(value, 10);
+        let parsedValue = parseInt(value, 10);
+        if (isNaN(parsedValue)) {
+            parsedValue = 0;
+        }
+        state.milestone = parsedValue;
     },
     SET_SIMULATION_PERIODS(state, value) {
         let parsedValue = parseInt(value, 10);
@@ -50,12 +54,18 @@ const actions = {
         commit('SET_HISTORICAL_DATA', historicalData);
     },
     setMilestone({commit}, milestone) {
-        const parsedMilestone = parseInt(milestone, 10);
+        let parsedMilestone = parseInt(milestone, 10);
+        if (isNaN(parsedMilestone)) {
+            parsedMilestone = 0;
+        }
         commit('SET_MILESTONE', parsedMilestone);
         setLocalStorage('milestone', parsedMilestone);
     },
     setSimulationPeriods({commit}, simulationPeriods) {
-        const parsedSimulationPeriods = parseInt(simulationPeriods, 10);
+        let parsedSimulationPeriods = parseInt(simulationPeriods, 10);
+        if (isNaN(parsedSimulationPeriods) || parsedSimulationPeriods <= 0) {
+            parsedSimulationPeriods = 1;
+        }
         commit('SET_SIMULATION_PERIODS', parsedSimulationPeriods);
         setLocalStorage('simulationPeriods', parsedSimulationPeriods);
     },
@@ -86,12 +96,13 @@ const actions = {
 
         dispatch('setHistoricalData', historicalDataAsArray);
     },
-    setHistoricalRecordCount({commit}, historicalRecordCount) {
+    setHistoricalRecordCount({state, commit}, historicalRecordCount) {
         let parsedHistoricalRecordCount = parseInt(historicalRecordCount, 10);
         if (parsedHistoricalRecordCount < 0) {
             parsedHistoricalRecordCount = 0;
         }
         commit('SET_HISTORICAL_DATA_LENGTH', parsedHistoricalRecordCount);
+        setLocalStorage('historicalData', state.historicalData);
     },
 };
 
