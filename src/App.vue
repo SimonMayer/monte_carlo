@@ -1,4 +1,5 @@
 <template>
+  <LoadingIndicator/>
   <div class="header">
     <h1>Monte Carlo</h1>
     <h2>forecast tool</h2>
@@ -10,10 +11,12 @@
 
 <script>
 import DashboardPage from '@/components/DashboardPage.vue';
+import LoadingIndicator from '@/components/LoadingIndicator.vue';
 
 export default {
   name: 'App',
   components: {
+    LoadingIndicator,
     DashboardPage,
   },
 };

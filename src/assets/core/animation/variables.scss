@@ -1,0 +1,6 @@
+$base-transition-time: 0.3s;
+
+$transition-time-standard: $base-transition-time;
+$transition-time-slow: $base-transition-time * 1.5;
+$transition-time-slower: $base-transition-time * 2;
+$transition-time-slowest: $base-transition-time * 2.5;
