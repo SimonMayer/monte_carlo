@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div class="simulation-inputs">
     <div class="input-group">
       <label class="label-heading" for="milestone">Milestone:</label>
       <input
@@ -59,7 +59,7 @@
       <label class="label-heading" for="historicalRecordCount">Number of historical records:</label>
       <input
           id="historicalRecordCount"
-          min="1"
+          min="2"
           type="number"
           v-bind:value="historicalRecordCount"
           @input="updateHistoricalRecordCount"
@@ -72,6 +72,7 @@
       <ol :class="`digits-${historicalRecordCount.toString().length}`">
         <li v-for="(data, index) in historicalData" :key="index">
           <input
+              min="0"
               type="number"
               v-bind:value="historicalData[index]"
               @input="updateHistoricalDataFromInput($event, index)"
@@ -91,12 +92,16 @@
           @input="updateHistoricalDataFromText"
       ></textarea>
       <small>
-        Enter the number of completed units per period, separated by commas, spaces or new lines. Example: 14, 12, 7, 11
+        Enter the number of units that were previously completed per period, separated by commas, spaces or new lines.
+        Example: 14, 12, 7, 11
       </small>
     </div>
 
     <div class="input-group">
-      <button id="createEnsemble" @click="createEnsemble">Create Ensemble</button>
+      <button id="generateEnsemble" :disabled="isLoading" @click="validateInputs">Generate ensemble</button>
+      <ul v-if="errors.length" class="error">
+        <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+      </ul>
     </div>
   </div>
 </template>
@@ -105,10 +110,17 @@
 import {mapActions, mapGetters} from 'vuex';
 
 export default {
-  name: 'DashboardPage',
+  name: 'SimulationInputsPage',
+  data() {
+    return {
+      errors: [],
+    };
+  },
   computed: {
     ...mapGetters(
         {
+          isGenerated: 'ensembleGenerator/isGenerated',
+          isLoading: 'loading/isLoading',
           historicalData: 'simulationInputs/historicalData',
           historicalDataAsText: 'simulationInputs/historicalDataAsText',
           historicalRecordCount: 'simulationInputs/historicalRecordCount',
@@ -126,7 +138,7 @@ export default {
       setHistoricalRecordCount: 'simulationInputs/setHistoricalRecordCount',
       setMilestone: 'simulationInputs/setMilestone',
       setSimulationPeriods: 'simulationInputs/setSimulationPeriods',
-      createEnsemble: 'ensembleGenerator/createEnsemble',
+      generateEnsemble: 'ensembleGenerator/generateEnsemble',
     }),
     updateHistoricalDataFromInput(event, index) {
       if (event.target.value === '') {
@@ -163,6 +175,40 @@ export default {
     updateHistoricalDataInputMethod(event) {
       this.setHistoricalDataInputMethod(event.target.value);
     },
+    validateInputs() {
+      this.errors = [];
+      const milestone = parseInt(this.milestone, 10);
+      const simulationPeriods = parseInt(this.simulationPeriods, 10);
+
+      if (!Number.isInteger(milestone) || milestone < 1) {
+        this.errors.push('Milestone must be a positive integer.');
+      }
+
+      if (!Number.isInteger(simulationPeriods) || simulationPeriods < 1) {
+        this.errors.push('Simulation periods must be a positive integer.');
+      }
+
+      if (this.historicalData.length < 2) {
+        this.errors.push('You must provide data for at least two historical periods.');
+      }
+
+      if (this.historicalData.some(value => value < 0)) {
+        this.errors.push('Historical units completed per period may not be negative.');
+      }
+
+      if (this.errors.length > 0) {
+        return;
+      }
+
+      this.generateEnsemble();
+    },
+  },
+  watch: {
+    isGenerated(newValue) {
+      if (newValue) {
+        this.$router.push(this.$router.getRouteById('home'));
+      }
+    },
   },
 };
 </script>
@@ -183,6 +229,15 @@ export default {
     margin-bottom: 5px;
   }
 
+  ul.error {
+    color: color.$error;
+    padding: 0;
+
+    li {
+      list-style-type: none;
+    }
+  }
+
   input, textarea {
     background-color: color.$mutedVeryLight;
     padding: 5px;
@@ -192,6 +247,11 @@ export default {
 
   input[type=number] {
     width: 70px;
+  }
+
+  input[type="radio"],
+  input[type="checkbox"] {
+    accent-color: color.$accent;
   }
 
   textarea {
@@ -252,6 +312,10 @@ export default {
     small {
       margin-left: 190px;
       flex-basis: 100%;
+    }
+
+    button {
+      margin-left: 190px;
     }
   }
 }

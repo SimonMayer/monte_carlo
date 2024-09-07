@@ -1,6 +1,9 @@
+import {getLocalStorage, setLocalStorage} from '@/utils/localStorage';
+
 const PERSISTENT_STATE_PROPERTIES = ['simulationBatchSize', 'simulationRunCount'];
 
 const state = {
+    generatedTimestamp: null,
     simulationBatchSize: null,
     simulationRunCount: null,
     simulationProgressionByPeriod: [],
@@ -35,8 +38,8 @@ const mutations = {
     },
     SET_MILESTONE(state, value) {
         let parsedValue = parseInt(value, 10);
-        if (isNaN(parsedValue)) {
-            parsedValue = 0;
+        if (isNaN(parsedValue) || parsedValue <= 0) {
+            parsedValue = 1;
         }
         state.milestone = parsedValue;
     },
@@ -49,7 +52,7 @@ const mutations = {
     },
     SET_HISTORICAL_DATA(state, value) {
         state.historicalData = Array.isArray(value)
-            ? value.map(item => parseInt(item, 10))
+            ? value.map(item => parseInt(item, 10)).filter(item => item >= 0)
             : [];
     },
     CREATE_SIMULATION_PROGRESSION_ARRAYS(state) {
@@ -69,9 +72,56 @@ const mutations = {
             [...simulationArray].sort((a, b) => a - b),
         );
     },
+    RECORD_GENERATED_TIMESTAMP(state) {
+        state.generatedTimestamp = Date.now();
+    },
+    SET_GENERATED_TIMESTAMP(state, value) {
+        state.generatedTimestamp = Number.isInteger(value) ? value : null;
+    },
+    SET_SIMULATION_PROGRESS_BY_PERIOD(state, value) {
+        const isValid = Array.isArray(value) &&
+            value.every(
+                arr => Array.isArray(arr) && arr.every(item => Number.isInteger(item)),
+            );
+        state.simulationProgressionByPeriod = isValid ? value : [];
+    },
+    SET_SORTED_SIMULATION_PROGRESS_BY_PERIOD(state, value) {
+        const isValid = Array.isArray(value) &&
+            value.every(
+                arr => Array.isArray(arr) && arr.every(item => Number.isInteger(item)),
+            );
+        state.sortedSimulationProgressionByPeriod = isValid ? value : [];
+    },
 };
 
 const actions = {
+    loadFromLocalStorage({commit}) {
+        const milestone = getLocalStorage('ensembleGenerator/milestone') || null;
+        const simulationPeriods = getLocalStorage('ensembleGenerator/simulationPeriods') || null;
+        const historicalData = getLocalStorage('ensembleGenerator/historicalData') || null;
+        const simulationProgressionByPeriod = getLocalStorage('ensembleGenerator/simulationProgressionByPeriod') || null;
+        const sortedSimulationProgressionByPeriod = getLocalStorage('ensembleGenerator/sortedSimulationProgressionByPeriod') || null;
+        const generatedTimestamp = getLocalStorage('ensembleGenerator/generatedTimestamp') || null;
+
+        if (milestone) {
+            commit('SET_MILESTONE', milestone);
+        }
+        if (simulationPeriods) {
+            commit('SET_SIMULATION_PERIODS', simulationPeriods);
+        }
+        if (historicalData) {
+            commit('SET_HISTORICAL_DATA', historicalData);
+        }
+        if (simulationProgressionByPeriod) {
+            commit('SET_SIMULATION_PROGRESS_BY_PERIOD', simulationProgressionByPeriod);
+        }
+        if (sortedSimulationProgressionByPeriod) {
+            commit('SET_SORTED_SIMULATION_PROGRESS_BY_PERIOD', sortedSimulationProgressionByPeriod);
+        }
+        if (generatedTimestamp) {
+            commit('SET_GENERATED_TIMESTAMP', generatedTimestamp);
+        }
+    },
     async setSimulationRunCount({commit}, runCount) {
         let parsedRunCount = parseInt(runCount, 10);
         if (isNaN(parsedRunCount) || parsedRunCount <= 0) {
@@ -86,12 +136,21 @@ const actions = {
         }
         commit('SET_SIMULATION_BATCH_SIZE', parsedBatchSize);
     },
-    async createEnsemble({state, commit, dispatch}) {
+    async clearEnsemble({commit}) {
+        commit('RESET_STATE');
+        setLocalStorage('ensembleGenerator/milestone', null);
+        setLocalStorage('ensembleGenerator/simulationPeriods', null);
+        setLocalStorage('ensembleGenerator/historicalData', null);
+        setLocalStorage('ensembleGenerator/simulationProgressionByPeriod', null);
+        setLocalStorage('ensembleGenerator/sortedSimulationProgressionByPeriod', null);
+        setLocalStorage('ensembleGenerator/generatedTimestamp', null);
+    },
+    async generateEnsemble({state, commit, dispatch}) {
         if (!state.simulationRunCount || !state.simulationBatchSize) {
             throw new Error('simulation run count and batch size must both be specified');
         }
 
-        dispatch('loading/recordLoadingStart', 'createEnsemble', {root: true});
+        dispatch('loading/recordLoadingStart', 'generateEnsemble', {root: true});
 
         setTimeout(() => { // use timeout to force immediate display of loading status
                 commit('RESET_STATE');
@@ -118,6 +177,16 @@ const actions = {
             await dispatch('runSimulation', i);
         }
 
+        const doneSimulationCount = state.simulationProgressionByPeriod[0].length;
+        await dispatch(
+            'loading/setLoadingMessage',
+            {
+                key: 'generateEnsemble',
+                message: `Generating ensemble: ${doneSimulationCount} of ${state.simulationRunCount} simulations complete.`,
+            },
+            {root: true},
+        );
+
         if (firstOutOfScopeSimulationIndex < state.simulationRunCount) {
             setTimeout(() => {
                     dispatch('runSimulationBatch', firstOutOfScopeSimulationIndex);
@@ -130,7 +199,17 @@ const actions = {
     },
     async handlePostSimulationEnsembleCreation({commit, dispatch}) {
         commit('POPULATE_SORTED_SIMULATION_PROGRESSION_ARRAYS');
-        dispatch('loading/recordLoadingEnd', 'createEnsemble', {root: true});
+        commit('RECORD_GENERATED_TIMESTAMP');
+        dispatch('persistEnsembleToLocalStorage');
+        dispatch('loading/recordLoadingEnd', 'generateEnsemble', {root: true});
+    },
+    async persistEnsembleToLocalStorage({state}) {
+        setLocalStorage('ensembleGenerator/milestone', state.milestone);
+        setLocalStorage('ensembleGenerator/simulationPeriods', state.simulationPeriods);
+        setLocalStorage('ensembleGenerator/historicalData', state.historicalData);
+        setLocalStorage('ensembleGenerator/simulationProgressionByPeriod', state.simulationProgressionByPeriod);
+        setLocalStorage('ensembleGenerator/sortedSimulationProgressionByPeriod', state.sortedSimulationProgressionByPeriod);
+        setLocalStorage('ensembleGenerator/generatedTimestamp', state.generatedTimestamp);
     },
     async runSimulation({state, commit, dispatch}, simulationIndex) {
         if (!state.simulationPeriods || state.simulationPeriods < 1) {
@@ -151,6 +230,23 @@ const actions = {
 };
 
 const getters = {
+    generatedTimestamp: (state) => state.generatedTimestamp,
+    milestone: (state) => state.milestone,
+    simulationPeriods: (state) => state.simulationPeriods,
+    isGenerated: (state) => {
+        return state.generatedTimestamp !== null;
+    },
+    completedSimulationCount: (state) => {
+        if (
+            !Array.isArray(state.simulationProgressionByPeriod) ||
+            state.simulationProgressionByPeriod.length === 0 ||
+            !Array.isArray(state.simulationProgressionByPeriod[0])
+        ) {
+            return 0;
+        }
+
+        return state.simulationProgressionByPeriod[0].length;
+    },
     getConservativelyPercentiledProgressionAtPeriod: (state) => (periodIndex, percentileFloat) => {
         const sortedArray = state.sortedSimulationProgressionByPeriod[periodIndex];
 
@@ -160,6 +256,19 @@ const getters = {
 
         const index = Math.max(0, Math.floor(percentileFloat * sortedArray.length) - 1);
         return sortedArray[index];
+    },
+    getChanceOfAchievingMilestoneByPeriod: (state) => (periodIndex) => {
+        const sortedArray = state.sortedSimulationProgressionByPeriod[periodIndex];
+
+        if (!sortedArray || sortedArray.length === 0 || state.milestone === null) {
+            return null;
+        }
+
+        const index = sortedArray.findIndex((value) => value >= state.milestone);
+
+        return (index === -1)
+            ? 0
+            : ((sortedArray.length - index) / sortedArray.length);
     },
 };
 

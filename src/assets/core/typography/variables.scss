@@ -1,0 +1,24 @@
+@use '@/assets/core/responsive/mixins' as responsive;
+
+@mixin font-sizes($fontSize) {
+  $fontSizeSmall: calc($fontSize / 1.2);
+  $fontSizeLarge: calc($fontSize * 1.2);
+
+  * {
+    --typography-font-size: #{$fontSize};
+    --typography-font-size-small: #{$fontSizeSmall};
+    --typography-font-size-large: #{$fontSizeLarge};
+  }
+}
+
+$fontFamily: 'Roboto', sans-serif;
+
+@include font-sizes(14px);
+
+@include responsive.breakpoint(medium) {
+  @include font-sizes(16px);
+}
+
+@include responsive.breakpoint(large) {
+  @include font-sizes(16px);
+}

@@ -1,13 +1,18 @@
-$rouletteRed: #92140C;
-$rouletteBlack: #00171F;
-$rouletteGreen: #6BAA75;
+$rouletteRed: #C0392B;
+$rouletteBlack: #2C3E50;
+$rouletteGreen: #239B56;
 
 $dark: $rouletteBlack;
 $light: #ffffff;
-$primary: #4062BB;
-$secondary: #F45B69;
+$primary: $rouletteRed;
+$secondary: #E67E22;
+$accent: $rouletteGreen;
+$error: #D9534F;
+$mutedVeryDark: #4A5553;
 $mutedDark: #7C8377;
+$mutedSlightlyDark: #8F9588;
 $mutedMid: #A2A79E;
+$mutedSlightlyLight: #BCC2B8;
 $mutedLight: #D1D5CF;
 $mutedVeryLight: #F4F7F2;
 

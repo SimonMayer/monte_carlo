@@ -1,3 +1,11 @@
+export const inputsAsValidIntegerOrNull = [
+    {input: 99, expected: 99},
+    {input: '767', expected: null},
+    {input: -8, expected: -8},
+    {input: 7.2, expected: null},
+    {input: 'five', expected: null},
+];
+
 export const inputsCastAsInteger = [
     {input: 99, expected: 99},
     {input: '767', expected: 767},
@@ -22,6 +30,26 @@ export const inputsCastAsArrayItemsCastAsIntegerDefaultsToEmptyIfInvalid = [
     {input: [], expected: []},
     {input: [1, 7, 3, -4, 0, 0, 3], expected: [1, 7, 3, -4, 0, 0, 3]},
     {input: [1, 7.2, '9', -4], expected: [1, 7, 9, -4]},
+];
+
+export const inputsCastAsArrayItemsCastAsPositiveIntegerDefaultsToEmptyIfInvalid = [
+    {input: null, expected: []},
+    {input: undefined, expected: []},
+    {input: 'someOldNonsense', expected: []},
+    {input: [], expected: []},
+    {input: [1, 7, 3, -4, 0, 0, 3], expected: [1, 7, 3, 0, 0, 3]},
+    {input: [1, 7.2, '9', -4], expected: [1, 7, 9]},
+];
+
+export const inputsCastToEmptyArrayIfNotArrayOfArraysOfIntegers = [
+    {input: null, expected: []},
+    {input: undefined, expected: []},
+    {input: 'someOldNonsense', expected: []},
+    {input: [], expected: []},
+    {input: [1, 7], expected: []},
+    {input: [[1, 7.2]], expected: []},
+    {input: [[1, '7']], expected: []},
+    {input: [[1, 7], [11, 9]], expected: [[1, 7], [11, 9]]},
 ];
 
 export const arrayOfIntegerArraysEachSortedAscendingly = [

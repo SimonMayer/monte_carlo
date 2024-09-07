@@ -27,7 +27,7 @@ const mutations = {
     },
     SET_HISTORICAL_DATA(state, value) {
         state.historicalData = Array.isArray(value)
-            ? value.map(item => parseInt(item, 10))
+            ? value.map(item => parseInt(item, 10)).filter(item => item >= 0)
             : [];
     },
     SET_HISTORICAL_DATA_LENGTH(state, value) {
@@ -43,10 +43,10 @@ const mutations = {
 
 const actions = {
     loadFromLocalStorage({commit}) {
-        const milestone = getLocalStorage('milestone') || 0;
-        const simulationPeriods = getLocalStorage('simulationPeriods') || 1;
-        const historicalDataInputMethod = getLocalStorage('historicalDataInputMethod') || null;
-        const historicalData = getLocalStorage('historicalData') || [];
+        const milestone = getLocalStorage('simulationInputs/milestone') || 0;
+        const simulationPeriods = getLocalStorage('simulationInputs/simulationPeriods') || 1;
+        const historicalDataInputMethod = getLocalStorage('simulationInputs/historicalDataInputMethod') || null;
+        const historicalData = getLocalStorage('simulationInputs/historicalData') || [];
 
         commit('SET_MILESTONE', milestone);
         commit('SET_SIMULATION_PERIODS', simulationPeriods);
@@ -59,7 +59,7 @@ const actions = {
             parsedMilestone = 0;
         }
         commit('SET_MILESTONE', parsedMilestone);
-        setLocalStorage('milestone', parsedMilestone);
+        setLocalStorage('simulationInputs/milestone', parsedMilestone);
     },
     setSimulationPeriods({commit}, simulationPeriods) {
         let parsedSimulationPeriods = parseInt(simulationPeriods, 10);
@@ -67,19 +67,19 @@ const actions = {
             parsedSimulationPeriods = 1;
         }
         commit('SET_SIMULATION_PERIODS', parsedSimulationPeriods);
-        setLocalStorage('simulationPeriods', parsedSimulationPeriods);
+        setLocalStorage('simulationInputs/simulationPeriods', parsedSimulationPeriods);
     },
     setHistoricalDataInputMethod({commit}, historicalDataInputMethod) {
         const parsedHistoricalDataInputMethod = String(historicalDataInputMethod);
         commit('SET_HISTORICAL_DATA_INPUT_METHOD', parsedHistoricalDataInputMethod);
-        setLocalStorage('historicalDataInputMethod', parsedHistoricalDataInputMethod);
+        setLocalStorage('simulationInputs/historicalDataInputMethod', parsedHistoricalDataInputMethod);
     },
     setHistoricalData({commit}, rawHistoricalData) {
         const parsedHistoricalData = Array.isArray(rawHistoricalData)
             ? rawHistoricalData.map(item => parseInt(item, 10))
             : [];
         commit('SET_HISTORICAL_DATA', parsedHistoricalData);
-        setLocalStorage('historicalData', parsedHistoricalData);
+        setLocalStorage('simulationInputs/historicalData', parsedHistoricalData);
     },
     setHistoricalDataFromText({dispatch, state}, historicalDataAsText) {
         const historicalDataAsArray = historicalDataAsText
@@ -102,7 +102,7 @@ const actions = {
             parsedHistoricalRecordCount = 0;
         }
         commit('SET_HISTORICAL_DATA_LENGTH', parsedHistoricalRecordCount);
-        setLocalStorage('historicalData', state.historicalData);
+        setLocalStorage('simulationInputs/historicalData', state.historicalData);
     },
 };
 

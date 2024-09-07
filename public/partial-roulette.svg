@@ -1,9 +1,11 @@
-<svg width="200" height="200" viewBox="30 10 50 50" xmlns="http://www.w3.org/2000/svg">
-    <g transform="translate(100,100)" stroke-width="0">
-        <path transform="rotate(38.91892,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(48.64865,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(58.37838,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(68.10811,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#6BAA75"/>
-        <path transform="rotate(77.83784,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
+<svg width="200" height="200" viewBox="30 4 61 61" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(100,100)" stroke-width="0.4" stroke="#A2A79E">
+        <path transform="rotate(36.11892,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(45.84865,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(55.57838,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(65.30811,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(75.03784,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#239B56"/>
+        <path transform="rotate(84.76757,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <circle cx="0" cy="0" r="99" stroke-width="0.5" stroke="#8F9588" fill="none"/>
     </g>
 </svg>

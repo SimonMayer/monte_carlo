@@ -10,8 +10,11 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "apexcharts": "^3.53.0",
     "core-js": "^3.8.3",
     "vue": "^3.2.13",
+    "vue-router": "^4.0.13",
+    "vue3-apexcharts": "^1.6.0",
     "vuex": "^4.1.0"
   },
   "devDependencies": {

@@ -1,41 +1,42 @@
 <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <g transform="translate(100,100)" stroke-width="0">
-        <path d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(9.72973,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(19.45946,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(29.18919,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(38.91892,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(48.64865,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(58.37838,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(68.10811,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#6BAA75"/>
-        <path transform="rotate(77.83784,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(87.56757,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(97.2973,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(107.02703,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(116.75676,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(126.48649,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(136.21622,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(145.94595,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(155.67568,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(165.40541,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(175.13514,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(184.86487,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(194.5946,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(204.32433,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(214.05406,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(223.78379,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(233.51352,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(243.24325,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(252.97298,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(262.70271,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(272.43244,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(282.16217,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(291.8919,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(301.62163,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(311.35136,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(321.08109,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(330.81082,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
-        <path transform="rotate(340.54055,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#00171F"/>
-        <path transform="rotate(350.27028,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#92140C"/>
+    <g transform="translate(100,100)" stroke-width="0.2" stroke="#A2A79E">
+        <path transform="rotate(6.72973,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(16.45946,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(26.18919,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(35.91892,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#239B56"/>
+        <path transform="rotate(45.64865,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(55.37838,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(65.10811,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(74.83784,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(84.56757,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(94.2973,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(104.02703,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(113.75676,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(123.48649,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(133.21622,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(142.94595,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(152.67568,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(162.40541,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(172.13514,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(181.86487,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(191.5946,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(201.32433,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(211.05406,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(220.78379,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(230.51352,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(240.24325,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(249.97298,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(259.70271,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(269.43244,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(279.16217,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(288.8919,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(298.62163,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(308.35136,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(318.08109,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(327.81082,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(337.54055,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <path transform="rotate(347.27028,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#C0392B"/>
+        <path transform="rotate(357.00000,0,0)" d="M0 0 L-97.614 16.434 A99 99 0 0 1 -99 0 Z" fill="#2C3E50"/>
+        <circle cx="0" cy="0" r="99" stroke-width="0.5" stroke="#8F9588" fill="none"/>
     </g>
 </svg>

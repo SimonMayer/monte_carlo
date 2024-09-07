@@ -1,17 +1,27 @@
-import {shallowMount} from '@vue/test-utils';
 import {nextTick} from 'vue';
-import DashboardPage from '@/components/DashboardPage.vue';
+import {shallowMount} from '@vue/test-utils';
+import SimulationInputsPage from '@/components/SimulationInputsPage.vue';
+import router from '@/router';
 import store from '@/store';
 
-describe('DashboardPage.vue', () => {
+describe('SimulationInputsPage.vue', () => {
     let wrapper;
+    let originalState;
 
     beforeEach(() => {
-        wrapper = shallowMount(DashboardPage, {
+        originalState = JSON.parse(JSON.stringify(store.state));
+        wrapper = shallowMount(SimulationInputsPage, {
             global: {
-                plugins: [store],
+                plugins: [
+                    router,
+                    store,
+                ],
             },
         });
+    });
+
+    afterEach(() => {
+        store.replaceState(originalState);
     });
 
     it('renders the milestone input with the correct store value', async () => {
@@ -137,18 +147,38 @@ describe('DashboardPage.vue', () => {
         }
     });
 
-    it('updates historical data input method when "Manual Entry" is selected', async () => {
+    it('updates historical data input method and shows correct inputs when "Manual Entry" is selected', async () => {
+        store.state.simulationInputs.historicalData = [15, 25, 35, 45];
         const manualRadioInput = wrapper.find('input[type="radio"][value="manual"]');
         await manualRadioInput.setChecked();
 
         expect(store.state.simulationInputs.isHistoricalDataInputManually).toBe(true);
+
+        expect(wrapper.find('#historicalRecordCount').isVisible()).toBe(true);
+        expect(wrapper.find('#historicalDataBulkEntry').isVisible()).toBe(false);
+
+        const perPeriodInputs = wrapper.findAll('ol li input[type="number"]');
+        expect(perPeriodInputs.length).toBe(4);
+        perPeriodInputs.forEach(input => {
+            expect(input.isVisible()).toBe(true);
+        });
     });
 
-    it('updates historical data input method when "Bulk Entry" is selected', async () => {
+    it('updates historical data input method and shows correct inputs when "Bulk Entry" is selected', async () => {
+        store.state.simulationInputs.historicalData = [17, 13];
         const bulkRadioInput = wrapper.find('input[type="radio"][value="bulk"]');
         await bulkRadioInput.setChecked();
 
         expect(store.state.simulationInputs.isHistoricalDataInputManually).toBe(false);
+
+        expect(wrapper.find('#historicalRecordCount').isVisible()).toBe(false);
+        expect(wrapper.find('#historicalDataBulkEntry').isVisible()).toBe(true);
+
+        const perPeriodInputs = wrapper.findAll('ol li input[type="number"]');
+        expect(perPeriodInputs.length).toBe(2);
+        perPeriodInputs.forEach(input => {
+            expect(input.isVisible()).toBe(false);
+        });
     });
 
     it('excludes invalid characters and updates historical data on bulk entry textarea change', async () => {
@@ -157,11 +187,11 @@ describe('DashboardPage.vue', () => {
             {input: '', expected: []},
             {input: ',', expected: []},
             {input: '0', expected: [0]},
-            {input: '-1', expected: [-1]},
+            {input: '-1', expected: []},
             {input: '1,7,8', expected: [1, 7, 8]},
             {input: 'a3 6 5', expected: [3, 6, 5]},
             {input: '1;4;8', expected: [1, 4, 8]},
-            {input: '3 11 5', expected: [3, 11, 5]},
+            {input: '3           11  5', expected: [3, 11, 5]},
             {input: '24' + '\r' + '22', expected: [24, 22]},
             {input: '1a2,17', expected: [12, 17]},
             {input: '1-3,77', expected: [77]},
@@ -183,7 +213,7 @@ describe('DashboardPage.vue', () => {
         expect(store.state.simulationInputs.historicalData.length).toBe(7);
     });
 
-    it('excludes invalid characters, defaults to 0 when empty, and updates historical data in store on historical data input change', async () => {
+    it('excludes invalid characters, defaults to 0 when empty, removes negative values altogether, and updates historical data in store on historical data input change', async () => {
         store.state.simulationInputs.historicalData = [82, 40, 23];
         store.state.simulationInputs.isHistoricalDataInputManually = true;
 
@@ -192,8 +222,8 @@ describe('DashboardPage.vue', () => {
             {input: '', expected: 0},
             {input: ',', expected: 0},
             {input: '0', expected: 0},
-            {input: '-1', expected: -1},
             {input: '1,7,8', expected: 0},
+            {input: '-1', expected: 23},
             {input: '7.2', expected: 7},
         ];
 
@@ -205,14 +235,120 @@ describe('DashboardPage.vue', () => {
         }
     });
 
-    it('dispatches the correct Vuex action on button click', async () => {
-        const dispatchMock = jest.fn();
-        wrapper.vm.$store.dispatch = dispatchMock;
+    it('disables the generateEnsemble button when loading', async () => {
+        wrapper.vm.$store.dispatch = jest.fn();
 
-        const button = wrapper.find('button#createEnsemble');
+        wrapper.vm.$store.state.loading.loadingFlags = {anything: true};
+        wrapper.vm.$store.state.simulationInputs.milestone = 1;
+        wrapper.vm.$store.state.simulationInputs.simulationPeriods = 1;
+        wrapper.vm.$store.state.simulationInputs.historicalData = [22, 17];
+
+        await wrapper.vm.$nextTick();
+
+        const button = wrapper.find('button#generateEnsemble');
+        expect(button.exists()).toBe(true);
+        expect(button.element.disabled).toBe(true);
+        await button.trigger('click');
+        expect(wrapper.vm.$store.dispatch).not.toHaveBeenCalled();
+    });
+
+    it('enables the generateEnsemble button when not loading', async () => {
+        store.state.loading.loadingFlags = {};
+
+        await nextTick();
+
+        const button = wrapper.find('button#generateEnsemble');
+        expect(button.exists()).toBe(true);
+        expect(button.element.disabled).toBe(false);
+    });
+
+    it('dispatches the generateEnsemble action on button click if valid data is provided', async () => {
+        wrapper.vm.$store.dispatch = jest.fn();
+        wrapper.vm.$store.state.simulationInputs.milestone = 1;
+        wrapper.vm.$store.state.simulationInputs.simulationPeriods = 1;
+        wrapper.vm.$store.state.simulationInputs.historicalData = [22, 17];
+
+        const button = wrapper.find('button#generateEnsemble');
         expect(button.exists()).toBe(true);
 
         await button.trigger('click');
-        expect(dispatchMock).toHaveBeenCalledWith('ensembleGenerator/createEnsemble', expect.anything());
+        expect(wrapper.vm.$store.dispatch).toHaveBeenCalledWith('ensembleGenerator/generateEnsemble');
+    });
+
+    it('shows errors and does not dispatch generateEnsemble action if required inputs are missing or invalid', async () => {
+        wrapper.vm.$store.dispatch = jest.fn();
+
+        const testCases = [
+            {state: {simulationInputs: {}}, errors: ['milestone', 'simulationPeriods', 'historicalData']},
+            {state: {simulationInputs: {milestone: 20, historicalData: [22, 17]}}, errors: ['simulationPeriods']},
+            {
+                state: {simulationInputs: {milestone: 20, simulationPeriods: '', historicalData: [22, 17]}},
+                errors: ['simulationPeriods'],
+            },
+            {
+                state: {simulationInputs: {milestone: 1, simulationPeriods: 0, historicalData: [22, 17]}},
+                errors: ['simulationPeriods'],
+            },
+            {
+                state: {simulationInputs: {milestone: 1, simulationPeriods: -1, historicalData: [22, 17]}},
+                errors: ['simulationPeriods'],
+            },
+            {state: {simulationInputs: {simulationPeriods: 10, historicalData: [22, 17]}}, errors: ['milestone']},
+            {
+                state: {simulationInputs: {milestone: '', simulationPeriods: 10, historicalData: [22, 17]}},
+                errors: ['milestone'],
+            },
+            {
+                state: {simulationInputs: {milestone: 0, simulationPeriods: 10, historicalData: [22, 17]}},
+                errors: ['milestone'],
+            },
+            {
+                state: {simulationInputs: {milestone: -1, simulationPeriods: 10, historicalData: [22, 17]}},
+                errors: ['milestone'],
+            },
+            {
+                state: {simulationInputs: {milestone: 1, simulationPeriods: 1, historicalData: []}},
+                errors: ['historicalDataLength'],
+            },
+            {
+                state: {simulationInputs: {milestone: 1, simulationPeriods: 1, historicalData: [22]}},
+                errors: ['historicalDataLength'],
+            },
+            {
+                state: {simulationInputs: {milestone: 1, simulationPeriods: 1, historicalData: [-4, 22]}},
+                errors: ['historicalDataNonNegative'],
+            },
+            {
+                state: {simulationInputs: {milestone: 1, simulationPeriods: 1, historicalData: [-4]}},
+                errors: ['historicalDataLength', 'historicalDataNonNegative'],
+            },
+        ];
+
+        for (const {state, errors} of testCases) {
+            for (const [key, value] of Object.entries(state)) {
+                store.state[key] = value;
+            }
+
+            const button = wrapper.find('button#generateEnsemble');
+            await button.trigger('click');
+
+            expect(wrapper.vm.$store.dispatch).not.toHaveBeenCalled();
+            const errorList = wrapper.findAll('ul.error li');
+            expect(errorList.length).toBe(errors.length);
+            for (const [index, error] of errors.entries()) {
+                if (error === 'milestone') {
+                    expect(errorList.at(index).text()).toBe('Milestone must be a positive integer.');
+                }
+                if (error === 'simulationPeriods') {
+                    expect(errorList.at(index).text()).toBe('Simulation periods must be a positive integer.');
+                }
+                if (error === 'historicalDataLength') {
+                    expect(errorList.at(index).text()).toBe('You must provide data for at least two historical periods.');
+                }
+                if (error === 'historicalDataNonNegative') {
+                    expect(errorList.at(index).text()).toBe('Historical units completed per period may not be negative.');
+                }
+            }
+        }
     });
 });
