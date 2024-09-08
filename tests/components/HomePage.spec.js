@@ -93,14 +93,25 @@ describe('HomePage.vue', () => {
         expect(wrapper.text()).toContain('You may view the following charts:');
 
         const listItems = wrapper.findAll('ul li');
-        expect(listItems.length).toBe(1);
+        expect(listItems.length).toBe(3);
 
-        const firstItem = listItems.at(0);
-        expect(firstItem.text()).toContain('Forecast burn-up chart');
+        const itemAt0 = listItems.at(0);
+        expect(itemAt0.text()).toContain('Forecast burn-up chart');
+        const linkAt0 = itemAt0.find('a');
+        expect(linkAt0.exists()).toBe(true);
+        expect(linkAt0.attributes('href')).toBe(wrapper.vm.$router.getRouteById('forecast-burn-up'));
 
-        const routerLink = firstItem.find('a');
-        expect(routerLink.exists()).toBe(true);
-        expect(routerLink.attributes('href')).toBe(wrapper.vm.$router.getRouteById('forecast-burn-up'));
+        const itemAt1 = listItems.at(1);
+        expect(itemAt1.text()).toContain('Milestone cumulative chart');
+        const linkAt1 = itemAt1.find('a');
+        expect(linkAt1.exists()).toBe(true);
+        expect(linkAt1.attributes('href')).toBe(wrapper.vm.$router.getRouteById('milestone-cumulative'));
+
+        const itemAt2 = listItems.at(2);
+        expect(itemAt2.text()).toContain('Milestone distribution chart');
+        const linkAt2 = itemAt2.find('a');
+        expect(linkAt2.exists()).toBe(true);
+        expect(linkAt2.attributes('href')).toBe(wrapper.vm.$router.getRouteById('milestone-distribution'));
     });
 
     it('displays the correct number of runs and periods when an ensemble is generated', async () => {

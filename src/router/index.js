@@ -1,6 +1,8 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import ForecastBurnUpPage from '@/components/ForecastBurnUpPage.vue';
 import HomePage from '@/components/HomePage.vue';
+import MilestoneCumulativePage from '@/components/MilestoneCumulativePage.vue';
+import MilestoneDistributionPage from '@/components/MilestoneDistributionPage.vue';
 import SimulationInputsPage from '@/components/SimulationInputsPage.vue';
 
 const routes = [
@@ -21,6 +23,18 @@ const routes = [
         name: 'Forecast burn-up',
         component: ForecastBurnUpPage,
         meta: {id: 'forecast-burn-up'},
+    },
+    {
+        path: '/milestone-cumulative',
+        name: 'Cumulative milestone achievement likelihood',
+        component: MilestoneCumulativePage,
+        meta: {id: 'milestone-cumulative'},
+    },
+    {
+        path: '/milestone-distribution',
+        name: 'Milestone achievement distribution',
+        component: MilestoneDistributionPage,
+        meta: {id: 'milestone-distribution'},
     },
 ];
 

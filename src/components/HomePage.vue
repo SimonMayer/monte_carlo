@@ -15,6 +15,12 @@
         <li>
           <router-link :to="$router.getRouteById('forecast-burn-up')">Forecast burn-up chart</router-link>
         </li>
+        <li>
+          <router-link :to="$router.getRouteById('milestone-cumulative')">Milestone cumulative chart</router-link>
+        </li>
+        <li>
+          <router-link :to="$router.getRouteById('milestone-distribution')">Milestone distribution chart</router-link>
+        </li>
       </ul>
       <hr/>
       <p>Alternatively, you may clear the previous ensemble and prepare a new one:</p>

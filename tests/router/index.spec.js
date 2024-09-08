@@ -1,6 +1,8 @@
 import router from '@/router';
 import HomePage from '@/components/HomePage.vue';
 import ForecastBurnUpPage from '@/components/ForecastBurnUpPage.vue';
+import MilestoneCumulativePage from '@/components/MilestoneCumulativePage.vue';
+import MilestoneDistributionPage from '@/components/MilestoneDistributionPage.vue';
 import SimulationInputsPage from '@/components/SimulationInputsPage.vue';
 
 describe('Router Configuration', () => {
@@ -9,6 +11,8 @@ describe('Router Configuration', () => {
             {path: '/', name: 'Home', component: HomePage},
             {path: '/simulation-inputs', name: 'Simulation inputs', component: SimulationInputsPage},
             {path: '/forecast-burn-up', name: 'Forecast burn-up', component: ForecastBurnUpPage},
+            {path: '/milestone-cumulative', name: 'Cumulative milestone achievement likelihood', component: MilestoneCumulativePage},
+            {path: '/milestone-distribution', name: 'Milestone achievement distribution', component: MilestoneDistributionPage},
         ]) {
             await router.push(path);
             expect(router.currentRoute.value.name).toBe(name);
@@ -24,6 +28,8 @@ describe('getRouteById', () => {
             {id: 'home', path: '/'},
             {id: 'simulation-inputs', path: '/simulation-inputs'},
             {id: 'forecast-burn-up', path: '/forecast-burn-up'},
+            {id: 'milestone-cumulative', path: '/milestone-cumulative'},
+            {id: 'milestone-distribution', path: '/milestone-distribution'},
         ]) {
             expect(router.getRouteById(id)).toBe(path);
         }
