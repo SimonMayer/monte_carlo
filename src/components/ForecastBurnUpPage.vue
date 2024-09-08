@@ -59,6 +59,11 @@ export default {
   methods: {
     generateSeriesDataAtConfidenceLevel(confidenceLevel) {
       const data = [];
+
+      if (this.simulationPeriods === 1) {
+        data.push({x: 0, y: 0});
+      }
+
       for (let simulationPeriod = 0; simulationPeriod < this.simulationPeriods; simulationPeriod++) {
         const humanReadablePeriodNumber = simulationPeriod + 1;
         const percentileFloat = 1 - confidenceLevel;
@@ -75,6 +80,11 @@ export default {
     },
     generateSeriesDataForMilestoneLine() {
       const data = [];
+
+      if (this.simulationPeriods === 1) {
+        data.push({x: 0, y: this.milestone});
+      }
+
       for (let simulationPeriod = 0; simulationPeriod < this.simulationPeriods; simulationPeriod++) {
         const humanReadablePeriodNumber = simulationPeriod + 1;
         data.push({

@@ -810,4 +810,35 @@ describe('ensemble generator store module', () => {
             expect(result).toStrictEqual(expected);
         }
     });
+
+    it('returns whether the last value in the last period of sorted simulations is at least as high as the milestone to determine whether the milestone was achieve', () => {
+        const state = {
+            sortedSimulationProgressionByPeriod: [
+                [10, 20, 30],
+                [15, 25, 35],
+                [20, 40, 50],
+            ],
+        };
+
+        for (const {milestone, expected} of [
+            {milestone: 51, expected: false},
+            {milestone: 50, expected: true},
+            {milestone: 49, expected: true},
+            {milestone: 1, expected: true},
+        ]) {
+            state.milestone = milestone;
+            expect(storeModule.getters.isMilestoneAchievementSimulated(state)).toStrictEqual(expected);
+        }
+    });
+
+    it('returns false for milestone achievement simulated if data is not sufficient', () => {
+        for (const {milestone, sortedSimulationProgressionByPeriod} of [
+            {milestone: 0, sortedSimulationProgressionByPeriod: []},
+            {milestone: 0, sortedSimulationProgressionByPeriod: [[], [], []]},
+            {milestone: -1, sortedSimulationProgressionByPeriod: [[], [], []]},
+        ]) {
+            const state = {milestone, sortedSimulationProgressionByPeriod};
+            expect(storeModule.getters.isMilestoneAchievementSimulated(state)).toStrictEqual(false);
+        }
+    });
 });

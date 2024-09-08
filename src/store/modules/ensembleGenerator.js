@@ -270,6 +270,18 @@ const getters = {
             ? 0
             : ((sortedArray.length - index) / sortedArray.length);
     },
+    isMilestoneAchievementSimulated:(state) => {
+        if (
+            state.sortedSimulationProgressionByPeriod.length === 0 ||
+            state.sortedSimulationProgressionByPeriod.at(-1).length === 0
+        ) {
+            return false;
+        }
+        const lastPeriodSortedProgress = state.sortedSimulationProgressionByPeriod.at(-1);
+        const highestValue = lastPeriodSortedProgress.at(-1);
+
+        return highestValue >= state.milestone;
+    },
 };
 
 export default {

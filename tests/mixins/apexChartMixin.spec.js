@@ -264,7 +264,7 @@ describe('apexChartMixin', () => {
 
     describe('methods', () => {
         it('updates seriesData correctly when updateSeriesData is called', () => {
-            wrapper.vm.series = [{name: 'Test Series', data: [10, 20, 30]}];
+            wrapper.vm.series = [{name: 'Test Series', data: [{x: 1, y: 0}, {x: 2, y: 0}, {x: 3, y: 1}]}];
 
             wrapper.vm.updateSeriesData();
             expect(wrapper.vm.seriesData).toStrictEqual(wrapper.vm.series);

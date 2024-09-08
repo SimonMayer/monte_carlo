@@ -114,4 +114,15 @@ describe('ForecastBurnUpPage.vue', () => {
             [{x: 1, y: 1342}, {x: 2, y: 1342}, {x: 3, y: 1342}, {x: 4, y: 1342}, {x: 5, y: 1342}, {x: 6, y: 1342}],
         );
     });
+
+    it('computes the series data with confidence points at 0,0 and a milestone line at x=0, if there is only one simulation period', async () => {
+        store.state.ensembleGenerator.simulationPeriods = 1;
+        store.state.ensembleGenerator.milestone = 17;
+        store.state.ensembleGenerator.sortedSimulationProgressionByPeriod = [
+            [0, 0, 10, 11, 15, 16],
+        ];
+
+        expect(wrapper.vm.generateSeriesDataAtConfidenceLevel(0.35)).toStrictEqual([{x: 0, y: 0}, {x: 1, y: 10}]);
+        expect(wrapper.vm.generateSeriesDataForMilestoneLine()).toStrictEqual([{x: 0, y: 17}, {x: 1, y: 17}]);
+    });
 });

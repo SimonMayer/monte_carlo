@@ -55,6 +55,7 @@ describe('MilestoneCumulativePage.vue', () => {
         expect(chart.props('optionsData')).toStrictEqual(wrapper.vm.optionsData);
         expect(chart.props('seriesData')).toStrictEqual(wrapper.vm.seriesData);
         expect(chart.props('beforeZoomHandler')).toBe(wrapper.vm.handleBeforeZoomEvent);
+        expect(chart.props('requiresMilestoneAchievement')).toStrictEqual(true);
         expect(chart.props('showTooltip')).toStrictEqual(['medium', 'large']);
         expect(chart.props('type')).toStrictEqual('area');
     });
@@ -76,6 +77,26 @@ describe('MilestoneCumulativePage.vue', () => {
                     { x: 1, y: 30 },
                     { x: 2, y: 80 },
                     { x: 3, y: 80 },
+                ],
+            },
+        ];
+
+        expect(wrapper.vm.series).toStrictEqual(expectedSeries);
+    });
+
+    it('computes the series data with a point at 0,0 if there is only one simulation period', async () => {
+        store.state.ensembleGenerator.simulationPeriods = 1;
+        store.state.ensembleGenerator.milestone = 17;
+        store.state.ensembleGenerator.sortedSimulationProgressionByPeriod = [
+            [0, 0, 10, 11, 15, 16, 16, 21, 23, 28],
+        ];
+
+        const expectedSeries = [
+            {
+                name: 'Cumulative likelihood of achieving milestone',
+                data: [
+                    { x: 0, y: 0 },
+                    { x: 1, y: 30 },
                 ],
             },
         ];

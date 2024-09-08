@@ -3,6 +3,7 @@
     <EnsembleChart
         :beforeZoomHandler="handleBeforeZoomEvent"
         :optionsData="optionsData"
+        :requiresMilestoneAchievement="true"
         :seriesData="seriesData"
         :showTooltip="['medium', 'large']"
         title="Milestone achievement distribution"
@@ -42,6 +43,11 @@ export default {
     series() {
       const data = [];
       let priorCumulativeChance = 0;
+
+      if (this.simulationPeriods === 1) {
+        data.push({x: 0, y: 0});
+      }
+
       for (let i = 0; i < this.simulationPeriods; i++) {
         const humanReadablePeriodNumber = i + 1;
         const cumulativeChance = this.getChanceOfAchievingMilestoneByPeriod(i);
