@@ -1,20 +1,60 @@
-# Monte Carlo forecasting tool
-A simulator and forecast tool, using the Monte Carlo method; which carries out multiple simulations, based on historic outcomes. 
+Monte Carlo forecasting tool
+=======================
+A web-based forecasting tool, utilizing the Monte Carlo simulation method to provide probabilistic insights based on historical data. This tool is designed for visualizing outcomes and trends across multiple simulation runs, helping to make data-driven decisions.
 
-## Requirements
-A modern web browser. Specifically one that supports ECMAScript 6.
+Getting Started
+---------------
 
-## Getting started
-1. Download the source files
-1. Open src/pages/dashboard.html in your browser
-1. Enter your data in to the form
-1. Click **Calculate**
+### Prerequisites
+*   Node.js 16.x or higher
+*   npm (Node Package Manager)
+*   Git
+*   A modern web browser (Chrome, Firefox, Edge, Safari) that supports ECMAScript 2022 or higher.
 
-## Advanced configuration
-Changes to default parameters can be made in src/assets/scripts/app-config.js
+Installation and Setup
+----------------------
 
-## Third parties
-The following third party scripts are used in this application:
-* Bootstrap 4.1.0
-* jQuery 3.1.1
-* Chart.js 2.7.2
+### 1\. Clone the repository
+
+    git clone https://github.com/SimonMayer/monte_carlo.git
+
+### 2\. Navigate to the project directory
+
+    cd monte_carlo
+
+### 3\. Install dependencies
+
+    npm install
+
+### 4\. Run the development server
+
+    npm run serve
+
+This will start a local development server, and typically using port `8080`. Open your browser and go to [http://localhost:8080](http://localhost:8080) to view the app.
+
+### 5\. Build for production
+
+To create a production build, run:
+
+    npm run build
+
+This will generate optimized static files in the `dist` directory.
+
+Usage
+-----
+
+1.  Navigate to the simulation input page and provide historical data.
+2.  Configure simulation parameters, including the milestone, number of simulated runs and historical data.
+3.  Click **Generate Ensemble** to create the ensemble of simulated data.
+4.  View the simulated data in charts showing the forecast burn-up, and likelihoods of achieving the milestone at or by specific periods. 
+
+
+Contributing
+------------
+
+Contributions are welcome! Please submit a pull request or open an issue to discuss your ideas.
+
+License
+-------
+
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
