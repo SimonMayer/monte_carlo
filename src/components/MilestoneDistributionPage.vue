@@ -1,7 +1,6 @@
 <template>
   <div class="milestone-distribution-page">
     <EnsembleChart
-        :beforeZoomHandler="handleBeforeZoomEvent"
         :optionsData="optionsData"
         :requiresMilestoneAchievement="true"
         :seriesData="seriesData"

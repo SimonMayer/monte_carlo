@@ -1,7 +1,6 @@
 <template>
   <div class="forecast-burn-up-page">
     <EnsembleChart
-        :beforeZoomHandler="handleBeforeZoomEvent"
         :optionsData="optionsData"
         :seriesData="seriesData"
         :showTooltip="['medium', 'large']"

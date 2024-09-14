@@ -40,10 +40,6 @@ describe('MilestoneCumulativePage.vue', () => {
         });
     });
 
-    it('has the handleBeforeZoomEvent method defined', () => {
-        expect(wrapper.vm.handleBeforeZoomEvent).toBeDefined();
-    });
-
     it('renders EnsembleChart component', () => {
         const chart = wrapper.findComponent(EnsembleChart);
         expect(chart.exists()).toBe(true);
@@ -54,7 +50,6 @@ describe('MilestoneCumulativePage.vue', () => {
         expect(chart.props('title')).toBe('Cumulative milestone achievement');
         expect(chart.props('optionsData')).toStrictEqual(wrapper.vm.optionsData);
         expect(chart.props('seriesData')).toStrictEqual(wrapper.vm.seriesData);
-        expect(chart.props('beforeZoomHandler')).toBe(wrapper.vm.handleBeforeZoomEvent);
         expect(chart.props('requiresMilestoneAchievement')).toStrictEqual(true);
         expect(chart.props('showTooltip')).toStrictEqual(['medium', 'large']);
         expect(chart.props('type')).toStrictEqual('area');

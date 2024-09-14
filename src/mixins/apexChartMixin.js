@@ -72,13 +72,25 @@ export const apexChartMixin = {
             return {
                 show: true,
                 tools: {
-                    reset: '<img src="/icons/reset.svg" width="20">',
+                    reset: false,
+                    pan: false,
+                    zoom: false,
+                    zoomin: false,
+                    zoomout: false,
                 },
             };
         },
         chartZoomOptions() {
+            /**
+             * disabling native zoom functionality, due to its limitations
+             *   y-zoom is limited:
+             *     — Toolbar zoom-in and zoom-out buttons don't work with it.
+             *     — Using pan resets y-zoom.
+             *   toolbar buttons to pan or zoom by dragging selection are disabled in an undocumented way on touch
+             *     devices: https://github.com/apexcharts/apexcharts.js/issues/4701
+             */
             return {
-                type: 'x', // y-zoom is limited. Toolbar options don't work with it. Using pan resets y-zoom.
+                enabled: false, //
             };
         },
         dataLabelsOptions() {
@@ -263,12 +275,6 @@ export const apexChartMixin = {
             }
 
             return {min: provisionalMin, max: provisionalMax, tickInterval};
-        },
-        handleBeforeZoomEvent(chartContext, {xaxis}) {
-            const xCalculatedAxisValues = this.xCalculateAxisFromAdjustment(xaxis.min, xaxis.max);
-            xaxis.min = xCalculatedAxisValues.min;
-            xaxis.max = xCalculatedAxisValues.max;
-            return {xaxis};
         },
     },
     mounted() {

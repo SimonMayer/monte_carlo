@@ -19,7 +19,6 @@ describe('EnsembleChart.vue', () => {
                     data: [{x: 1, y: 30}, {x: 2, y: 50}],
                 },
             ],
-            beforeZoomHandler: jest.fn(),
             type: 'line',
             requiresMilestoneAchievement: false,
             showTooltip: ['small', 'medium'],
@@ -189,14 +188,6 @@ describe('EnsembleChart.vue', () => {
         expect(apexChart.props('type')).toBe(propsData.type);
         expect(apexChart.props('options')).toStrictEqual(propsData.optionsData);
         expect(apexChart.props('series')).toStrictEqual(propsData.seriesData);
-    });
-
-    it('triggers the beforeZoomHandler when zooming on the chart', async () => {
-        const propsData = generateDefaultProps();
-        const wrapper = createWrapper(propsData);
-
-        await wrapper.findComponent(ApexCharts).vm.$emit('beforeZoom');
-        expect(propsData.beforeZoomHandler).toHaveBeenCalled();
     });
 
     it('displays the no-data explanation message when seriesData is empty, or has no data in children, or data in children are not arrays', async () => {

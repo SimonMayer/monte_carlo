@@ -31,7 +31,6 @@
           :type="type"
           class="chart"
           height="100%"
-          @beforeZoom="beforeZoomHandler"
       ></apexchart>
     </div>
     <div v-else-if="requiresMilestoneAchievement && !isMilestoneAchievementSimulated" class="no-relevant-data-message">
@@ -87,10 +86,6 @@ export default {
     },
     seriesData: {
       type: Array,
-      required: true,
-    },
-    beforeZoomHandler: {
-      type: Function,
       required: true,
     },
     type: {

@@ -150,13 +150,17 @@ describe('apexChartMixin', () => {
             expect(wrapper.vm.chartToolbarOptions).toStrictEqual({
                 show: true,
                 tools: {
-                    reset: '<img src="/icons/reset.svg" width="20">',
+                    reset: false,
+                    pan: false,
+                    zoom: false,
+                    zoomin: false,
+                    zoomout: false,
                 },
             });
         });
 
         it('computes chartZoomOptions correctly based on default values', () => {
-            expect(wrapper.vm.chartZoomOptions).toStrictEqual({type: 'x'});
+            expect(wrapper.vm.chartZoomOptions).toStrictEqual({enabled: false});
         });
 
         it('computes dataLabelsOptions correctly based on default values', () => {
@@ -511,18 +515,6 @@ describe('apexChartMixin', () => {
                     expectTickIntervalCalculatorCalledWith[1],
                 );
             }
-        });
-
-        it('calculates axis from adjustment using x axis data and returns the modified xaxis object when handling the beforeZoom event', () => {
-            wrapper.vm.series = [{data: [{x: 1374, y: 5}, {x: 4, y: 30}]}];
-            wrapper.vm.xIdealTickAmountExcludingEnd = 6;
-            const xaxis = {min: 15, max: 391};
-
-            const result = wrapper.vm.handleBeforeZoomEvent(undefined, {xaxis});
-            expect(result).toStrictEqual({
-                xaxis: {min: 13, max: 391},
-            });
-            expect(result.xaxis).toBe(xaxis);
         });
     });
 });
