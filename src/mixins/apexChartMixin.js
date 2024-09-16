@@ -1,4 +1,9 @@
+import {apexChartAxisCalculationMixin} from '@/mixins/apexChartAxisCalculationMixin';
+
 export const apexChartMixin = {
+    mixins: [
+        apexChartAxisCalculationMixin,
+    ],
     data() {
         return {
             seriesData: [],
@@ -20,9 +25,20 @@ export const apexChartMixin = {
             dashArray: 0,
             xAxisDecimalsInFloat: 0,
             xAxisTitle: '',
-            xIdealTickAmountExcludingEnd: 5,
+            xMax: null,
+            xMaximumTickQuantity: 6,
+            xMin: null,
+            xMinimumTickInterval: 1,
+            xTickAmount: null,
+            xTickInterval: null,
             yAxisTitle: '',
-            yIdealTickAmountIncludingEnd: 6,
+            yMax: null,
+            yMaximumTickQuantity: 6,
+            yMin: null,
+            yMinimumTickInterval: 1,
+            yTickAmount: null,
+            yTickInterval: null,
+            zoomLevel: 0,
         };
     },
     computed: {
@@ -72,13 +88,94 @@ export const apexChartMixin = {
             return {
                 show: true,
                 tools: {
+                    download: '<img src="/icons/download.svg" width="20" height="20" />',
                     reset: false,
                     pan: false,
                     zoom: false,
                     zoomin: false,
                     zoomout: false,
+                    customIcons: this.chartToolbarCustomIconOptions,
+                },
+                export: {
+                    csv: {
+                        headerCategory: this.xAxisTitle,
+                    },
                 },
             };
+        },
+        isFullyZoomedOut() {
+            return this.zoomLevel < 1;
+        },
+        isZoomViewInEnabled() {
+            return (this.xTickInterval > this.xMinimumTickInterval) || (this.yTickInterval > this.yMinimumTickInterval);
+        },
+        isZoomViewOutEnabled() {
+            return !this.isFullyZoomedOut;
+        },
+        isMoveViewLeftEnabled() {
+            return !this.isFullyZoomedOut && this.xMin > this.xLowestValueInData;
+        },
+        isMoveViewUpEnabled() {
+            return !this.isFullyZoomedOut && this.yMax <= this.yHighestValueInData;
+        },
+        isMoveViewDownEnabled() {
+            return !this.isFullyZoomedOut && this.yMin > 0;
+        },
+        isMoveViewRightEnabled() {
+            return !this.isFullyZoomedOut && this.xMax < this.xHighestValueInData;
+        },
+        toolbarIconPathZoomIn() {
+            const fileName = 'zoom-in' + (this.isZoomViewInEnabled ? '' : '-disabled');
+            return `/icons/${fileName}.svg`;
+        },
+        toolbarIconPathZoomOut() {
+            const fileName = 'zoom-out' + (this.isZoomViewOutEnabled ? '' : '-disabled');
+            return `/icons/${fileName}.svg`;
+        },
+        toolbarIconPathMoveLeft() {
+            const fileName = 'move-left' + (this.isMoveViewLeftEnabled ? '' : '-disabled');
+            return `/icons/${fileName}.svg`;
+        },
+        toolbarIconPathMoveUp() {
+            const fileName = 'move-up' + (this.isMoveViewUpEnabled ? '' : '-disabled');
+            return `/icons/${fileName}.svg`;
+        },
+        toolbarIconPathMoveDown() {
+            const fileName = 'move-down' + (this.isMoveViewDownEnabled ? '' : '-disabled');
+            return `/icons/${fileName}.svg`;
+        },
+        toolbarIconPathMoveRight() {
+            const fileName = 'move-right' + (this.isMoveViewRightEnabled ? '' : '-disabled');
+            return `/icons/${fileName}.svg`;
+        },
+        toolbarIconPathReset() {
+            return '/icons/reset.svg';
+        },
+        toolbarIconPathDivider() {
+            return '/icons/divider.svg';
+        },
+        chartToolbarCustomIconOptions() {
+            const iconOptions = [
+                {srcPath: this.toolbarIconPathZoomIn, title: 'zoom in', click: this.zoomViewIn},
+                {srcPath: this.toolbarIconPathZoomOut, title: 'zoom out', click: this.zoomViewOut},
+                {divider: true},
+                {srcPath: this.toolbarIconPathMoveLeft, title: 'move left', click: this.moveViewLeft},
+                {srcPath: this.toolbarIconPathMoveUp, title: 'move up', click: this.moveViewUp},
+                {srcPath: this.toolbarIconPathMoveDown, title: 'move down', click: this.moveViewDown},
+                {srcPath: this.toolbarIconPathMoveRight, title: 'move right', click: this.moveViewRight},
+                {divider: true},
+                {srcPath: this.toolbarIconPathReset, title: 'reset view', click: this.applyDefaultView},
+                {divider: true},
+            ];
+
+            return iconOptions.map((option, index) => ({
+                icon: `<img src="${option.divider ? this.toolbarIconPathDivider : option.srcPath}" width="${option.divider ? 2 : 20}" height="20" />`,
+                index: index - iconOptions.length,
+                title: option.divider ? '' : option.title,
+                class: option.divider ? 'divider' : 'custom-icon',
+                click: option.divider ? function () {
+                } : option.click,
+            }));
         },
         chartZoomOptions() {
             /**
@@ -90,7 +187,7 @@ export const apexChartMixin = {
              *     devices: https://github.com/apexcharts/apexcharts.js/issues/4701
              */
             return {
-                enabled: false, //
+                enabled: false,
             };
         },
         dataLabelsOptions() {
@@ -144,9 +241,6 @@ export const apexChartMixin = {
                 title: {
                     text: this.xAxisTitle,
                 },
-                min: this.xLowestValueInData,
-                max: this.xCalculateMaxAxisFromData(),
-                tickAmount: this.xCalculateTickAmountExcludingEnd(), // defined as "Number of Tick Intervals to show." — unlike yaxis, it appears this excludes both the first and last displayed values
                 tickPlacement: 'on',
             };
         },
@@ -155,9 +249,6 @@ export const apexChartMixin = {
                 title: {
                     text: this.yAxisTitle,
                 },
-                min: 0,
-                max: this.yCalculateMaxAxisFromData(),
-                tickAmount: this.yCalculateTickAmountIncludingEnd(), // defined as "Number of Tick Intervals to show." — unlike xaxis, it appears this includes one, but not both of the first and last displayed values
                 labels: {
                     formatter: (value) => {
                         return parseInt(value, 10);
@@ -167,11 +258,151 @@ export const apexChartMixin = {
         },
     },
     methods: {
-        updateSeriesData() {
-            this.seriesData = this.series;
-        },
-        updateOptionsData() {
+        updateOptionsData(options) {
             this.optionsData = {
+                ...this.optionsData,
+                ...options,
+            };
+        },
+        refreshChartOptions() {
+            this.updateOptionsData({chart: this.chartOptions});
+        },
+        xSetAxisPosition() {
+            this.xaxisOptions.min = (typeof this.xMin === 'number' && !isNaN(this.xMin))
+                ? this.xMin
+                : this.xLowestValueInData;
+            this.xaxisOptions.max = (typeof this.xMax === 'number' && !isNaN(this.xMax))
+                ? this.xMax
+                : this.xHighestValueInData;
+            this.xaxisOptions.tickAmount = (typeof this.xTickAmount === 'number' && !isNaN(this.xTickAmount))
+                ? this.xTickAmount
+                : this.xMaximumTickQuantity;
+
+            this.updateOptionsData({xaxis: this.xaxisOptions});
+            this.refreshChartOptions();
+        },
+        xAdjustAxis() {
+            const zoomFactor = Math.pow(0.5, this.zoomLevel);
+            const xApproximateViewCenter = (this.xaxisOptions.min + this.xaxisOptions.max) / 2;
+            const xApproximateViewSize = (this.xHighestValueInData - this.xLowestValueInData) * zoomFactor;
+
+            const xAxisViewAdjustment = this.calculateAxisViewAdjustment(
+                this.xLowestValueInData,
+                this.xHighestValueInData,
+                xApproximateViewCenter,
+                xApproximateViewSize,
+                this.xMinimumTickInterval,
+                this.xMaximumTickQuantity,
+                false,
+            );
+            this.xMin = xAxisViewAdjustment.viewStart;
+            this.xMax = xAxisViewAdjustment.viewEnd;
+            this.xTickInterval = xAxisViewAdjustment.tickInterval;
+            /**
+             *  undocumented, but apexcharts seems to place an additional tick on the x-axis, despite not doing this
+             *  for the y-axis.
+             */
+            this.xTickAmount = xAxisViewAdjustment.tickQuantity - 1;
+            this.xSetAxisPosition();
+        },
+        ySetAxisPosition() {
+            this.yaxisOptions.min = (typeof this.yMin === 'number' && !isNaN(this.yMin))
+                ? this.yMin
+                : 0;
+            this.yaxisOptions.max = (typeof this.yMax === 'number' && !isNaN(this.yMax))
+                ? this.yMax
+                : this.yHighestValueInData;
+            this.yaxisOptions.tickAmount = (typeof this.yTickAmount === 'number' && !isNaN(this.yTickAmount))
+                ? this.yTickAmount
+                : this.yMaximumTickQuantity;
+
+            this.updateOptionsData({yaxis: this.yaxisOptions});
+            this.refreshChartOptions();
+        },
+        yAdjustAxis() {
+            const zoomFactor = Math.pow(0.5, this.zoomLevel);
+
+            const yApproximateViewCenter = (this.yaxisOptions.min + this.yaxisOptions.max) / 2;
+            const yApproximateViewSize = this.yHighestValueInData * zoomFactor;
+            const yAxisViewAdjustment = this.calculateAxisViewAdjustment(
+                0,
+                this.yHighestValueInData + this.yMinimumTickInterval,
+                yApproximateViewCenter,
+                yApproximateViewSize,
+                this.yMinimumTickInterval,
+                this.yMaximumTickQuantity,
+                true,
+            );
+            this.yMin = yAxisViewAdjustment.viewStart;
+            this.yMax = yAxisViewAdjustment.viewEnd;
+            this.yTickInterval = yAxisViewAdjustment.tickInterval;
+            /**
+             *  undocumented, but unlike with the x-axis, apexcharts seems to not place an additional tick on the
+             *  y-axis. It just uses the specified tickAmount.
+             */
+            this.yTickAmount = yAxisViewAdjustment.tickQuantity;
+            this.ySetAxisPosition();
+        },
+        zoomViewIn() {
+            if (!this.isZoomViewInEnabled) {
+                return;
+            }
+            this.zoomLevel++;
+            this.xAdjustAxis();
+            this.yAdjustAxis();
+        },
+        zoomViewOut() {
+            if (!this.isZoomViewOutEnabled) {
+                return;
+            }
+            this.zoomLevel--;
+            this.xAdjustAxis();
+            this.yAdjustAxis();
+        },
+        moveViewLeft() {
+            if (!this.isMoveViewLeftEnabled) {
+                return;
+            }
+            this.xaxisOptions.min = this.xaxisOptions.min - this.xTickInterval;
+            this.xaxisOptions.max = this.xaxisOptions.max - this.xTickInterval;
+            this.xAdjustAxis();
+        },
+        moveViewUp() {
+            if (!this.isMoveViewUpEnabled) {
+                return;
+            }
+            this.yaxisOptions.min = this.yaxisOptions.min + this.yTickInterval;
+            this.yaxisOptions.max = this.yaxisOptions.max + this.yTickInterval;
+            this.yAdjustAxis();
+        },
+        moveViewDown() {
+            if (!this.isMoveViewDownEnabled) {
+                return;
+            }
+            this.yaxisOptions.min = this.yaxisOptions.min - this.yTickInterval;
+            this.yaxisOptions.max = this.yaxisOptions.max - this.yTickInterval;
+            this.yAdjustAxis();
+        },
+        moveViewRight() {
+            if (!this.isMoveViewRightEnabled) {
+                return;
+            }
+            this.xaxisOptions.min = this.xaxisOptions.min + this.xTickInterval;
+            this.xaxisOptions.max = this.xaxisOptions.max + this.xTickInterval;
+            this.xAdjustAxis();
+        },
+        applyDefaultView() {
+            this.zoomLevel = 0;
+            this.xaxisOptions.min = this.xLowestValueInData;
+            this.xaxisOptions.max = this.xHighestValueInData;
+            this.yaxisOptions.min = 0;
+            this.yaxisOptions.max = this.yHighestValueInData;
+
+            this.xAdjustAxis();
+            this.yAdjustAxis();
+        },
+        setOptionsData() {
+            this.updateOptionsData({
                 chart: this.chartOptions,
                 dataLabels: this.dataLabelsOptions,
                 stroke: this.strokeOptions,
@@ -180,105 +411,15 @@ export const apexChartMixin = {
                 tooltip: this.tooltipOptions,
                 xaxis: this.xaxisOptions,
                 yaxis: this.yaxisOptions,
-            };
+            });
         },
-        calculateNeatInterval(provisionalInterval, useHigherInterval) {
-            const unsortedNeatIntervals = [1.0, 2.0, 2.5, 5.0];
-            const neatIntervals = unsortedNeatIntervals.sort((a, b) => useHigherInterval ? a - b : b - a);
-            const fallbackMultiplier = useHigherInterval ? 10 : 0.1;
-
-            const magnitude = Math.pow(10, Math.floor(Math.log10(provisionalInterval)));
-            const normalizedInterval = provisionalInterval / magnitude;
-
-            for (const neat of neatIntervals) {
-                if (useHigherInterval ? (normalizedInterval < neat) : (normalizedInterval >= neat)) {
-                    return neat * magnitude;
-                }
-            }
-
-            return fallbackMultiplier * magnitude;
-        },
-        yCalculateMaxAxisFromData() {
-            return this.yCalculateTickAmountIncludingEnd() * this.yCalculateTickInterval();
-        },
-        yCalculateTickAmountIncludingEnd() {
-            const requiredAxisHeight = this.yHighestValueInData + 1; // presentation decision: ensure top data point is not at absolute top of chart
-            return Math.ceil(requiredAxisHeight / this.yCalculateTickInterval());
-        },
-        yCalculateTickInterval() {
-            const lowestValue = 0;
-            const highestValue = this.yHighestValueInData;
-            const tickAmountIncludingEnd = Math.min(this.yIdealTickAmountIncludingEnd, highestValue + 1); // presentation decision: ensure top data point is not at absolute top of chart
-            const tickInterval = this.calculateTickInterval(lowestValue, highestValue, tickAmountIncludingEnd);
-
-            const lowerNeatInterval = this.calculateNeatInterval(tickInterval, false);
-
-            if (tickAmountIncludingEnd * lowerNeatInterval > highestValue) {
-                return lowerNeatInterval;
-            }
-
-            return this.calculateNeatInterval(tickInterval, true);
-        },
-        xCalculateMaxAxisFromData() {
-            const numberOfTicksIncludingEnd = this.xCalculateTickAmountExcludingEnd() + 1;
-            const axisRange = numberOfTicksIncludingEnd * this.xCalculateTickIntervalFromData();
-            return this.xLowestValueInData + axisRange;
-        },
-        xCalculateTickAmountExcludingEnd() {
-            return Math.min(
-                this.xIdealTickAmountExcludingEnd,
-                ((this.xHighestValueInData - this.xLowestValueInData) - 1),
-            );
-        },
-        xCalculateTickIntervalFromData() {
-            return this.xCalculateTickInterval(this.xLowestValueInData, this.xHighestValueInData);
-        },
-        xCalculateTickInterval(startValue, endValue) {
-            return this.calculateTickInterval(startValue, endValue, this.xCalculateTickAmountExcludingEnd() + 1);
-        },
-        calculateTickInterval(startValue, endValue, tickAmountIncludingEnd) {
-            const lowHighOffset = endValue - startValue;
-            return Math.ceil(lowHighOffset / tickAmountIncludingEnd);
-        },
-        xCalculateAxisFromAdjustment(specifiedMin, specifiedMax) {
-            return this.calculateAxisFromAdjustment(
-                specifiedMin,
-                specifiedMax,
-                this.xLowestValueInData,
-                this.xHighestValueInData,
-                this.xCalculateTickInterval,
-                this.xCalculateTickAmountExcludingEnd(),
-            );
-        },
-        calculateAxisFromAdjustment(
-            specifiedMin,
-            specifiedMax,
-            lowestValueInData,
-            highestValueInData,
-            tickIntervalCalculator,
-            tickAmountExcludingEnd,
-        ) {
-            let provisionalMin = Math.max(Math.floor(specifiedMin), lowestValueInData);
-            let provisionalMax = Math.min(Math.ceil(specifiedMax), highestValueInData);
-            const tickInterval = tickIntervalCalculator(provisionalMin, provisionalMax);
-
-            const numberOfTicksIncludingEnd = tickAmountExcludingEnd + 1;
-            const axisRange = numberOfTicksIncludingEnd * tickInterval;
-
-            provisionalMin = provisionalMax - axisRange; // use full range
-
-            const minDifferenceToData = provisionalMin - lowestValueInData;
-
-            if (minDifferenceToData < 0) { // check if adjusted minimum is too low and offset towards maximum
-                provisionalMin = provisionalMin - minDifferenceToData;
-                provisionalMax = provisionalMax - minDifferenceToData;
-            }
-
-            return {min: provisionalMin, max: provisionalMax, tickInterval};
+        updateSeriesData() {
+            this.seriesData = this.series;
         },
     },
     mounted() {
-        this.updateOptionsData();
+        this.setOptionsData();
         this.updateSeriesData();
+        this.applyDefaultView();
     },
 };

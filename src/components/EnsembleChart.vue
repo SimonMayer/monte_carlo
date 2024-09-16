@@ -15,10 +15,10 @@
       <summary><h3>{{ title }}</h3></summary>
       <small>
         The chart displays data based on an ensemble covering <strong>{{ simulationPeriods }}</strong> hypothetical
-        future {{ simulationPeriods > 1 ? 'periods' : 'period' }}, and incorporating the specified milestone of <strong>{{ milestone }}</strong>. Using the
-        provided historic data, potential outcomes were randomly selected and repeated over
-        <strong>{{ completedSimulationCount }}</strong> simulation runs. A large number of runs helps improve the
-        reliability of the results.
+        future {{ simulationPeriods > 1 ? 'periods' : 'period' }}, and incorporating the specified milestone of
+        <strong>{{ milestone }}</strong>. Using the provided historic data, potential outcomes were randomly selected
+        and repeated over <strong>{{ completedSimulationCount }}</strong> simulation runs. A large number of runs helps
+        improve the reliability of the results.
       </small>
     </details>
     <h3 v-else>{{ title }}</h3>

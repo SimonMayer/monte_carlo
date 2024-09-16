@@ -270,7 +270,7 @@ const getters = {
             ? 0
             : ((sortedArray.length - index) / sortedArray.length);
     },
-    isMilestoneAchievementSimulated:(state) => {
+    isMilestoneAchievementSimulated: (state) => {
         if (
             state.sortedSimulationProgressionByPeriod.length === 0 ||
             state.sortedSimulationProgressionByPeriod.at(-1).length === 0
